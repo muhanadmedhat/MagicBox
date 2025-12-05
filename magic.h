@@ -1,8 +1,20 @@
 #ifndef MAGIC_H
 #define MAGIC_H
 
+
 #include <string>
 #include <vector>
+#include "screen.h"
+
+#ifdef _WIN32
+#include <windows.h> // For Windows API
+#include <conio.h>   // For _getch()
+#else
+#include <unistd.h>  // For POSIX systems
+#include <termios.h> // For terminal settings
+#endif
+using namespace std;
+
 
 // --- Key Code Definitions ---
 #ifdef _WIN32
@@ -26,19 +38,10 @@
 #define KEY_BACKSPACE 8 // ASCII code for Backspace
 #define KEY_DELETE 127  // --- NEW: ASCII code for Delete ---
 
-// --- Low-Level Console Function Declarations ---
 
-void showCursor(bool visible);
-void clearScreen();
-void gotoxy(int x, int y);
-void setColor(int color);
-int readKey();
 
 // --- High-Level Application Logic Declarations ---
 
-void drawMenu(const std::vector<std::string> &items, int selectedItem);
-void showMainMenu();
-void handlePageInput();
 
-void magicsquaregenerator(int n);
+void magicsquaregenerator();
 #endif // DRAW_H

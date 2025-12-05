@@ -1,91 +1,42 @@
 #include "magic.h"
-#include <iostream>
-#include <vector>
-#include <string>
 
-#ifdef _WIN32
-#include <windows.h> // For Windows API
-#include <conio.h>   // For _getch()
-#else
-#include <unistd.h>  // For POSIX systems
-#include <termios.h> // For terminal settings
-#endif
-using namespace std;
-
-// --- Low-Level Function Implementations ---
-
-void showCursor(bool visible)
-{
-#ifdef _WIN32
-    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-    CONSOLE_CURSOR_INFO cursorInfo;
-    GetConsoleCursorInfo(hConsole, &cursorInfo);
-    cursorInfo.bVisible = visible;
-    SetConsoleCursorInfo(hConsole, &cursorInfo);
-#else
-    cout << (visible ? "\033[?25h" : "\033[?25l") << flush;
-#endif
-}
-
-void gotoxy(int x, int y)
-{
-#ifdef _WIN32
-    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-    COORD CursorPosition;
-    CursorPosition.X = x;
-    CursorPosition.Y = y;
-    SetConsoleCursorPosition(hConsole, CursorPosition);
-#else
-    cout << "\033[" << y + 1 << ";" << x + 1 << "H" << flush;
-#endif
-}
-
-void clearScreen()
-{
-#ifdef _WIN32
-    system("cls");
-#else
-    cout << "\033[2J\033[H" << flush;
-#endif
-}
-
-void setColor(int color)
-{
-#ifdef _WIN32
-    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-    SetConsoleTextAttribute(hConsole, color);
-#else
-    switch (color)
-    {
-    case 9:
-        cout << "\033[94m";
-        break;
-    case 15:
-        cout << "\033[97m";
-        break;
-    default:
-        cout << "\033[0m";
-        break;
-    }
-    cout << flush;
-#endif
-}
 
 // --- Magic Square Generator Implementation ---
 
-void magicsquaregenerator(int n)
+void magicsquaregenerator()
 {
-    while(n % 2 == 0 || n <= 0){
+    int n = 0;
+    string input;
+    bool valid = false;
+    
+    while(!valid){
         clearScreen();
         gotoxy(10, 5);
-        cout << "Grid size cannot be even number or string must be odd number. Please enter again the grid size: ";
-        cin >> n;
-
-        if(cin.fail()){
-        cin.clear();              // Clear the error flag
-        cin.ignore(10000, '\n');  // Discard invalid input from buffer
-        n = 0;                    // Set n to invalid value to continue loop
-    }
+        cout << "Enter grid size (must be odd number): ";
+        
+        getline(cin, input);
+        
+        // Check if input contains only digits
+        bool allDigits = true;
+        if(input.empty()){
+            allDigits = false;
+        }
+        for(char c : input){
+            if(!isdigit(c)){
+                allDigits = false;
+                break;
+            }
+        }
+        
+        if(allDigits){
+            n = stoi(input);  // Convert string to integer
+            if(n > 0 && n % 2 != 0){
+                valid = true;  // Valid odd number
+            }
+        }
+        if(n==1) valid=false;
+        
+        
     }
     
     clearScreen();
